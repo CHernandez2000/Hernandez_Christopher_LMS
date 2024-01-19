@@ -1,0 +1,77 @@
+/*
+Christopher Hernandez
+CRN: 3024
+1/17/2024
+Course: CEN Software Development 1
+ */
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+class LibraryBook {
+    int BookID;
+    String BookTitle;
+    String BookAuthor;
+
+    public LibraryBook(int BookID, String BookTitle, String BookAuthor){
+        this.BookID = BookID;
+        this.BookTitle = BookTitle;
+        this.BookAuthor = BookAuthor;
+    }
+}
+
+class LibraryCatalog {
+
+    //These set of codes are to list the sci-fi books for the library catalog class and to remove the one fantasy book so that the fantasy book doesn't become a part of the sci-fi book library catalog
+    List<LibraryBook> librarybooks = new ArrayList<>();
+
+    //method name is addSciFiBooks to add the sci-fi books for their ID number, title name, and author name
+    public void addSciFIBooks(int BookID, String BookTitle, String BookAuthor){
+        LibraryBook SciFIBooks = new LibraryBook(BookID, BookTitle, BookAuthor);
+        librarybooks.add(SciFIBooks);
+        System.out.println("Sci-FI genre books added to library catalog: " + SciFIBooks.BookTitle);
+    }
+
+    //method name is removeFantasyBooks to remove the fantasy book with the following ID number, title name, and author name
+    public void removeFantasyBooks(int BookID, String BookTitle, String BookAuthor){
+        Iterator<LibraryBook> iterator = librarybooks.iterator();
+        while (iterator.hasNext()) {
+            LibraryBook FantasyBooks = iterator.next();
+            if(FantasyBooks.BookID == BookID){
+                iterator.remove();
+                System.out.println("Fantasy genre books removed from library catalog: " + FantasyBooks.BookTitle);
+                return;
+                //returns the result of the listed books
+            }
+        }
+        System.out.println("The fantasy genre book with the ID number " + BookID + " is not found in the library search catalog.");
+        System.out.println("Therefore the book: " + BookTitle + ", written by author: " + BookAuthor + " isn't available in this category.");
+    }
+    //The public void class displays the listed sci-fi books that will display the ID number, title, and author name for the method displayLibraryBooks
+    public void displayLibraryBooks(){
+        System.out.println("Library books:");
+        for(LibraryBook Books : librarybooks){
+            System.out.println("Book ID number: " + Books.BookID + ", Book Title: " + Books.BookTitle + ", Book Author: " + Books.BookAuthor);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        LibraryCatalog library = new LibraryCatalog();
+
+        //adds the sci-fi books
+        library.addSciFIBooks(629, "Star Wars Darth Plagueis", "James Luceno");
+        library.addSciFIBooks(457, "Gears of War Aspho Fields", "Karen Traviss");
+        library.addSciFIBooks(910, "Star Wars Lost Stars", "Claudia Gray");
+        library.addSciFIBooks(285, "Reborn as a Space Mercenary", "Ryuto");
+
+        //removes the fantasy book
+        library.removeFantasyBooks(316, "World of Warcraft: Arthas: Rise of the Lich King", "Christie Golden");
+
+        //displays the library books
+        library.displayLibraryBooks();
+
+    }
+}
