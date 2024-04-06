@@ -1,0 +1,56 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.net.*;
+
+public class PrimeNumberClient extends JFrame {
+    private JTextField PrimeNumberField;
+    private JButton PrimeCheckButton;
+    private JLabel PrimeResultLabel;
+
+    public PrimeNumberClient() {
+        setTitle("Client");
+        setSize(300, 150);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JPanel panel = new JPanel(new GridLayout(3, 1));
+        PrimeNumberField = new JTextField();
+        PrimeCheckButton = new JButton("Check");
+        PrimeResultLabel = new JLabel();
+
+        panel.add(new JLabel("Enter a number:"));
+        panel.add(PrimeNumberField);
+        panel.add(PrimeCheckButton);
+        panel.add(PrimeResultLabel);
+
+        add(panel, BorderLayout.CENTER);
+
+        PrimeCheckButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String PrimeNumberStr = PrimeNumberField.getText().trim();
+                if (!PrimeNumberStr.isEmpty()) {
+                    try {
+                        Socket socket = new Socket("localhost", 57291);
+                        BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
+
+                        output.println(PrimeNumberStr);
+                        String PrimeResponse = input.readLine();
+                        PrimeResultLabel.setText("Is the number prime? " + PrimeResponse);
+
+                        socket.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        setVisible(true);
+    }
+    public static void main(String[] args) {
+        new PrimeNumberClient();
+    }
+}

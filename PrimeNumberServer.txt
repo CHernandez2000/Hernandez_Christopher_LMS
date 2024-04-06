@@ -1,0 +1,74 @@
+import java.io.*;
+import java.net.*;
+import java.util.Date;
+import javax.swing.*;
+import java.awt.*;
+
+public class PrimeNumberServer extends JFrame {
+    private JTextArea area;
+
+    public PrimeNumberServer() {
+        setTitle("Server");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        area = new JTextArea();
+        area.setEditable(false);
+        JScrollPane pane = new JScrollPane(area);
+        add(pane, BorderLayout.CENTER);
+
+        setVisible(true);
+
+        StartPrimeServer();
+    }
+
+    private void StartPrimeServer() {
+        try {
+            ServerSocket server = new ServerSocket(57291);
+            log("Server started at " + new Date() + '\n');
+
+            while (true) {
+                Socket client = server.accept();
+                log("New client connected: " + client.getInetAddress());
+
+                BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                PrintWriter output = new PrintWriter(client.getOutputStream(), true);
+
+                String PrimeNumberStr = input.readLine();
+                int PrimeNumber = Integer.parseInt(PrimeNumberStr);
+
+                String PrimeResponse = Prime(PrimeNumber) ? "Yes" : "No";
+                output.println(PrimeResponse);
+                log("Response sent to client: " + PrimeResponse);
+
+                client.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean Prime(int num) {
+        if (num <= 1)
+            return false;
+        if (num <= 3)
+            return true;
+        if (num % 2 == 0 || num % 3 == 0)
+            return false;
+        for (int i = 5; i * i <= num; i += 6) {
+            if (num % i == 0 || num % (i + 2) == 0)
+                return false;
+        }
+        return true;
+    }
+
+    private void log(String PrimeMessage) {
+        SwingUtilities.invokeLater(() -> {
+            area.append(PrimeMessage + "\n");
+        });
+    }
+
+    public static void main(String[] args) {
+        new PrimeNumberServer();
+    }
+}
